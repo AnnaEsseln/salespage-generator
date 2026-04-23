@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salespage Generator – Miniprodukte</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ebe9e2;
+      --gold: #a26a25;
+      --gold-dark: #8d5a1e;
+      --gold-light: #fdf6ee;
+      --white: #ffffff;
+      --text: #2c2b28;
+      --text-mid: #6b6760;
+      --text-soft: #8a8278;
+      --border: #d4cfc6;
+      --input-bg: #f5f3ee;
+      --card-shadow: 0 2px 24px rgba(0,0,0,0.07);
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 48px 16px 80px;
+    }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 700px; margin: 0 auto; }
+
+    /* ── HEADER ── */
+    .header { text-align: center; margin-bottom: 40px; }
+    .top-line { width: 44px; height: 1px; background: var(--gold); margin: 0 auto 36px; }
+
+    .main-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 8vw, 72px);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 14px;
+      letter-spacing: -0.01em;
+    }
+    .main-title em { color: var(--gold); font-style: italic; }
+
+    .sub-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .intro-text {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text-mid);
+      max-width: 460px;
+      margin: 0 auto;
+    }
+
+    /* ── PROGRESS ── */
+    .progress-wrap { display: flex; justify-content: center; gap: 8px; margin: 32px 0; }
+    .pdot {
+      width: 30px; height: 4px; border-radius: 2px;
+      background: var(--border);
+      transition: background 0.25s;
+    }
+    .pdot.done { background: rgba(162,106,37,0.35); }
+    .pdot.active { background: var(--gold); }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      padding: 36px 40px;
+    }
+
+    /* ── STEP ── */
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .step-label {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 28px;
+    }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 20px; }
+
+    label, .lbl {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .lbl-hint {
+      font-size: 10px; letter-spacing: 0;
+      font-weight: 400; color: #b0aa9e;
+      text-transform: none;
+    }
+
+    input[type=text], input[type=number], textarea, select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+      resize: vertical;
+      -webkit-appearance: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--gold); }
+    textarea { min-height: 80px; line-height: 1.6; }
+
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ── TYPE CARDS ── */
+    .type-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .type-card {
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+      cursor: pointer; background: var(--input-bg);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .type-card:hover { border-color: var(--gold); }
+    .type-card.sel { border-color: var(--gold); background: var(--gold-light); }
+    .type-badge {
+      display: block; font-size: 9px;
+      letter-spacing: 0.1em; color: var(--gold);
+      font-weight: 700; margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .type-card strong { display: block; font-size: 15px; color: var(--text); margin-bottom: 3px; }
+    .type-card small { font-size: 12px; color: var(--text-soft); }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: var(--bg); margin: 24px 0; }
+
+    /* ── TONE GRID ── */
+    .tone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tone-card {
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 16px; cursor: pointer;
+      font-size: 13px; color: var(--text-mid);
+      background: var(--input-bg); transition: all 0.15s;
+    }
+    .tone-card:hover { border-color: var(--gold); color: var(--text); }
+    .tone-card.sel { border-color: var(--gold); background: var(--gold-light); color: var(--gold); font-weight: 600; }
+
+    /* ── TAGS ── */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 6px 16px; font-size: 12px; cursor: pointer;
+      color: var(--text-mid); background: var(--input-bg);
+      transition: all 0.15s;
+    }
+    .tag:hover { border-color: var(--gold); }
+    .tag.sel { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 600; }
+
+    /* ── COLOR ROW ── */
+    .color-row { display: flex; align-items: center; gap: 10px; }
+    .color-row input[type=color] {
+      width: 44px; height: 40px; padding: 2px;
+      border-radius: 8px; cursor: pointer; flex-shrink: 0;
+    }
+    .color-row input[type=text] { flex: 1; font-size: 13px; }
+
+    /* ── TESTI ── */
+    .testi-inputs { display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── BUTTONS ── */
+    .btn-row { display: flex; gap: 12px; margin-top: 28px; align-items: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--gold); color: #fff;
+      border: none; border-radius: 10px;
+      padding: 13px 28px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; letter-spacing: 0.02em;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover { background: var(--gold-dark); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      background: transparent; color: var(--gold);
+      border: 1px solid var(--gold); border-radius: 10px;
+      padding: 13px 24px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: var(--gold-light); }
+
+    .btn-generate {
+      width: 100%;
+      background: var(--gold); color: #fff;
+      border: none; border-radius: 12px;
+      padding: 18px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.04em;
+      margin-top: 24px;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-generate:hover { background: var(--gold-dark); }
+    .btn-generate:active { transform: scale(0.99); }
+
+    /* ── RESULT ── */
+    .result-info {
+      background: var(--input-bg); border-radius: 10px;
+      padding: 16px 20px; font-size: 13px;
+      color: var(--text-mid); line-height: 1.6; margin-bottom: 16px;
+    }
+    .result-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .result-preview {
+      background: var(--input-bg); border-radius: 10px;
+      padding: 20px; font-size: 12px; color: var(--text-mid);
+      font-family: monospace; max-height: 300px;
+      overflow-y: auto; white-space: pre-wrap;
+      word-break: break-word; line-height: 1.6;
+      border: 1px solid var(--border);
+    }
+
+    /* ── LOADING ── */
+    .loading-box { text-align: center; padding: 48px 0; }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 14px; color: var(--text-soft); }
+
+    /* ── SUCCESS BADGE ── */
+    .success-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #eef7ee; border: 1px solid #b8dbb8;
+      border-radius: 8px; padding: 10px 16px;
+      font-size: 13px; color: #3a7a3a;
+      font-weight: 600; margin-bottom: 16px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 580px) {
+      .card { padding: 24px 20px; }
+      .row2 { grid-template-columns: 1fr; }
+      .type-cards { grid-template-columns: 1fr; }
+      .tone-grid { grid-template-columns: 1fr; }
+      .main-title { font-size: 38px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="top-line"></div>
+    <h1 class="main-title">Dein <em>Salespage</em><br>Generator</h1>
+    <p class="sub-label">Miniprodukte · Digital · Verkaufsstark</p>
+    <p class="intro-text">
+      Beantworte 6 kurze Fragen – das Tool erstellt daraus deine
+      komplette, verkaufsfertige Salespage. Einfach kopieren und einbauen.
+    </p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="prog">
+    <div class="pdot active" id="pd0"></div>
+    <div class="pdot" id="pd1"></div>
+    <div class="pdot" id="pd2"></div>
+    <div class="pdot" id="pd3"></div>
+    <div class="pdot" id="pd4"></div>
+    <div class="pdot" id="pd5"></div>
+  </div>
+
+  <!-- CARD -->
+  <div class="card">
+
+    <!-- ── SCHRITT 1 ── -->
+    <div class="step active" id="s0">
+      <p class="step-label">Schritt 1 von 6 · Produkt & Zielgruppe</p>
+
+      <div class="row2">
+        <div class="field">
+          <label>Name des Produkts</label>
+          <input type="text" id="prod_name" placeholder="z.B. Buchungs-Booster">
+        </div>
+        <div class="field">
+          <label>Preis (netto in €)</label>
+          <input type="number" id="price" placeholder="27">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Produkttyp</label>
+        <div class="type-cards">
+          <div class="type-card sel" data-type="miniprodukt">
+            <span class="type-badge">Einstieg</span>
+            <strong>Miniprodukt</strong>
+            <small>7 € – 47 €</small>
+          </div>
+          <div class="type-card" data-type="bump">
+            <span class="type-badge">Add-On</span>
+            <strong>Bump</strong>
+            <small>7 € – 27 €</small>
+          </div>
+          <div class="type-card" data-type="upsell">
+            <span class="type-badge">Hauptprodukt</span>
+            <strong>Upsell</strong>
+            <small>69 € +</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Thema – worum geht es?</label>
+        <input type="text" id="promise" placeholder="z.B. Erstes digitales Produkt in 7 Tagen erstellen">
+      </div>
+
+      <div class="field">
+        <label>Zielgruppe</label>
+        <input type="text" id="target" placeholder="z.B. Fotografinnen, die Wissen als Kurs verkaufen wollen">
+      </div>
+
+      <div class="field">
+        <label>Warum sollte jemand bei dir kaufen? <span class="lbl-hint">(Dein USP)</span></label>
+        <textarea id="usp" placeholder="Was macht dein Produkt einzigartig? Was können andere nicht bieten?"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Vorher <span class="lbl-hint">(das Problem)</span></label>
+          <textarea id="p_before" placeholder="Wie sieht das Leben VOR deinem Produkt aus?"></textarea>
+        </div>
+        <div class="field">
+          <label>Nachher <span class="lbl-hint">(das Ergebnis)</span></label>
+          <textarea id="p_after" placeholder="Was ist nach dem Kauf konkret anders?"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" onclick="goNext(0)">Weiter →</button>
+      </div>
+    </div>
+
+    <!-- ── SCHRITT 2 ── -->
+    <div class="step" id="s1">
+      <p class="step-label">Schritt 2 von 6 · Die 3 größten Probleme</p>
+      <p style="font-size:13px;color:var(--text-mid);margin-bottom:20px;line-height:1.6">
+        Schreib, wie deine Zielgruppe selbst reden würde – keine Marketing-Sprache.
+      </p>
+
+      <div class="field">
+        <label>Problem 1 – Was frustriert sie am meisten?</label>
+        <textarea id="p1" placeholder="z.B. Ich sitze stundenlang vor der Kamera und weiß nicht, was ich sagen soll..."></textarea>
+      </div>
+      <div class="field">
+        <label>Problem 2 – Woran scheitern sie konkret?</label>
+        <textarea id="p2" placeholder="z.B. Ich poste jeden Tag, aber niemand bucht wirklich bei mir..."></textarea>
+      </div>
+      <div class="field">
+        <label>Problem 3 – Was kostet sie das?</label>
+        <textarea id="p3" placeholder="z.B. Ich verbringe mehr Zeit mit Marketing als mit meiner eigentlichen Arbeit..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="goBack(1)">← Zurück</button>
+        <button class="btn-primary" onclick="goNext(1)">Weiter →</button>
+      </div>
+    </div>
+
+    <!-- ── SCHRITT 3 ── -->
+    <div class="step" id="s2">
+      <p class="step-label">Schritt 3 von 6 · Das Leben danach</p>
+
+      <div class="field">
+        <label>Das eine große Ergebnis nach dem Kauf</label>
+        <textarea id="outcome" placeholder="Was ist konkret anders? Muss greifbar und spezifisch sein – kein Fachwissen, echtes Leben."></textarea>
+      </div>
+      <div class="field">
+        <label>3 konkrete Vorteile / Veränderungen danach</label>
+        <textarea id="benefits" rows="5" placeholder="z.B.&#10;✓ Jeden Morgen aufwachen und neue Zahlungsbenachrichtigungen sehen&#10;✓ Offline sein ohne schlechtes Gewissen&#10;✓ Kunden gewinnen ohne täglich zu posten"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="goBack(2)">← Zurück</button>
+        <button class="btn-primary" onclick="goNext(2)">Weiter →</button>
+      </div>
+    </div>
+
+    <!-- ── SCHRITT 4 ── -->
+    <div class="step" id="s3">
+      <p class="step-label">Schritt 4 von 6 · Produktinhalt & Über dich</p>
+
+      <div class="field">
+        <label>Was ist drin? (Module, Inhalte, Boni)</label>
+        <textarea id="content" rows="6" placeholder="z.B.&#10;Modul 1: Dein Produkt finden (Wert 99€)&#10;Modul 2: Inhalte mit KI erstellen&#10;Bonus: 50 fertige Prompts (Wert 29€)&#10;Bonus: Produktcover-Vorlage"></textarea>
+      </div>
+      <div class="field">
+        <label>Dein Name & deine Credibility <span class="lbl-hint">(optional)</span></label>
+        <textarea id="creator" placeholder="z.B. Ich bin [Name] und helfe seit 3 Jahren Fotografinnen dabei, ihr erstes digitales Produkt zu launchen – über 200 Kundinnen haben damit ihren ersten Online-Verkauf gemacht."></textarea>
+      </div>
+      <div class="field">
+        <label>Testimonials <span class="lbl-hint">(optional – je 1 Satz)</span></label>
+        <div class="testi-inputs">
+          <input type="text" id="t1" placeholder="z.B. Lisa hat in 3 Tagen 570€ gemacht – nach nur 2 Stunden Arbeit!">
+          <input type="text" id="t2" placeholder="z.B. Mel: 18.000€ am Launch-Tag durch das System">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="goBack(3)">← Zurück</button>
+        <button class="btn-primary" onclick="goNext(3)">Weiter →</button>
+      </div>
+    </div>
+
+    <!-- ── SCHRITT 5 ── -->
+    <div class="step" id="s4">
+      <p class="step-label">Schritt 5 von 6 · Design & Tonalität</p>
+
+      <div class="row2">
+        <div class="field">
+          <label>Primärfarbe (Buttons)</label>
+          <div class="color-row">
+            <input type="color" id="col1" value="#a26a25">
+            <input type="text" id="col1txt" value="#a26a25" placeholder="#a26a25">
+          </div>
+        </div>
+        <div class="field">
+          <label>Akzent-Hintergrund</label>
+          <div class="color-row">
+            <input type="color" id="col2" value="#FFF3EE">
+            <input type="text" id="col2txt" value="#FFF3EE" placeholder="#FFF3EE">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tonalität</label>
+        <div class="tone-grid">
+          <div class="tone-card sel" data-v="empowernd & motivierend">Empowernd & motivierend</div>
+          <div class="tone-card" data-v="direkt & klar">Direkt & klar</div>
+          <div class="tone-card" data-v="soft & einfühlsam">Soft & einfühlsam</div>
+          <div class="tone-card" data-v="frech & selbstbewusst">Frech & selbstbewusst</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Für wen ist das Produkt?</label>
+        <div class="tag-row" id="who-tags">
+          <span class="tag sel">Fotografinnen</span>
+          <span class="tag">Coaches</span>
+          <span class="tag">Dienstleister</span>
+          <span class="tag">Online-Kursersteller</span>
+          <span class="tag">Alle Selbstständigen</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="goBack(4)">← Zurück</button>
+        <button class="btn-primary" onclick="goNext(4)">Weiter →</button>
+      </div>
+    </div>
+
+    <!-- ── SCHRITT 6 ── -->
+    <div class="step" id="s5">
+      <p class="step-label">Schritt 6 von 6 · Letzte Details</p>
+
+      <div class="field">
+        <label>Garantie <span class="lbl-hint">(optional)</span></label>
+        <input type="text" id="guarantee" placeholder="z.B. 14-Tage Geld-zurück-Garantie">
+      </div>
+      <div class="field">
+        <label>Streichpreis <span class="lbl-hint">(optional)</span></label>
+        <input type="text" id="oldprice" placeholder="z.B. statt regulär 199 €">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Zielplattform</label>
+          <select id="platform">
+            <option value="universal">Universal (HTML)</option>
+            <option value="elopage">Elopage</option>
+            <option value="thrivecart">ThriveCart</option>
+            <option value="kajabi">Kajabi</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Sprache</label>
+          <select id="lang">
+            <option value="Deutsch">Deutsch</option>
+            <option value="Englisch">Englisch</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="goBack(5)">← Zurück</button>
+      </div>
+      <button class="btn-generate" onclick="generate()">Salespage generieren ✦</button>
+    </div>
+
+    <!-- ── RESULT ── -->
+    <div class="step" id="s-result">
+      <p class="step-label">Deine Salespage</p>
+      <div id="result-info"></div>
+      <div id="result-actions" style="display:none" class="result-actions">
+        <button class="btn-primary" onclick="copyHTML()">HTML kopieren</button>
+        <button class="btn-secondary" onclick="downloadHTML()">Datei herunterladen</button>
+        <button class="btn-secondary" onclick="restart()">Neu erstellen</button>
+      </div>
+      <div id="result-preview" class="result-preview" style="display:none"></div>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /container -->
+
+<script>
+// ── STATE ──
+let cur = 0;
+let lastHTML = '';
+
+// ── NAVIGATION ──
+const required = {
+  0: ['prod_name','promise','target','price'],
+  1: ['p1','p2','p3'],
+  2: ['outcome','benefits'],
+  3: ['content'],
+};
+
+function goNext(n) {
+  if (required[n]) {
+    for (const id of required[n]) {
+      if (!v(id)) { alert('Bitte fülle alle Pflichtfelder aus.'); return; }
+    }
+  }
+  cur = n + 1;
+  show(cur);
+}
+function goBack(n) { cur = n - 1; show(cur); }
+
+function show(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(n < 6 ? 's' + n : 's-result').classList.add('active');
+  updDots(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updDots(n) {
+  for (let i = 0; i < 6; i++) {
+    const d = document.getElementById('pd' + i);
+    d.className = 'pdot' + (i < n ? ' done' : i === n ? ' active' : '');
+  }
+}
+
+function restart() { cur = 0; lastHTML = ''; show(0); }
+
+// ── INTERACTIVITY ──
+document.querySelectorAll('.type-card').forEach(c =>
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.type-card').forEach(x => x.classList.remove('sel'));
+    c.classList.add('sel');
+  })
+);
+document.querySelectorAll('.tone-card').forEach(c =>
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.tone-card').forEach(x => x.classList.remove('sel'));
+    c.classList.add('sel');
+  })
+);
+document.querySelectorAll('.tag').forEach(t =>
+  t.addEventListener('click', () => t.classList.toggle('sel'))
+);
+
+const c1 = document.getElementById('col1');
+const c1t = document.getElementById('col1txt');
+c1.addEventListener('input', () => c1t.value = c1.value);
+c1t.addEventListener('input', () => { if(/^#[0-9a-fA-F]{6}$/.test(c1t.value)) c1.value = c1t.value; });
+
+const c2 = document.getElementById('col2');
+const c2t = document.getElementById('col2txt');
+c2.addEventListener('input', () => c2t.value = c2.value);
+c2t.addEventListener('input', () => { if(/^#[0-9a-fA-F]{6}$/.test(c2t.value)) c2.value = c2t.value; });
+
+// ── HELPERS ──
+const v = id => (document.getElementById(id)?.value || '').trim();
+const getTone = () => document.querySelector('.tone-card.sel')?.dataset.v || 'empowernd & motivierend';
+const getType = () => document.querySelector('.type-card.sel')?.dataset.type || 'miniprodukt';
+const getWho = () => [...document.querySelectorAll('.tag.sel')].map(t => t.textContent).join(', ');
+
+// ── GENERATE ──
+async function generate() {
+  cur = 6; show(6);
+  const ri = document.getElementById('result-info');
+  const ra = document.getElementById('result-actions');
+  const rp = document.getElementById('result-preview');
+
+  ri.innerHTML = `<div class="loading-box"><div class="spinner"></div><p class="loading-text">Salespage wird erstellt – ca. 20 Sekunden...</p></div>`;
+  ra.style.display = 'none';
+  rp.style.display = 'none';
+
+  const d = {
+    name: v('prod_name'), type: getType(),
+    promise: v('promise'), target: v('target'),
+    price: v('price'), usp: v('usp'),
+    before: v('p_before'), afterShort: v('p_after'),
+    p1: v('p1'), p2: v('p2'), p3: v('p3'),
+    outcome: v('outcome'), benefits: v('benefits'),
+    content: v('content'), creator: v('creator'),
+    t1: v('t1'), t2: v('t2'),
+    col1: v('col1txt'), col2: v('col2txt'),
+    tone: getTone(), who: getWho(),
+    guarantee: v('guarantee'), oldprice: v('oldprice'),
+    platform: v('platform'), lang: v('lang'),
+  };
+
+  const prompt = buildPrompt(d);
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'API-Fehler');
+    }
+
+    const json = await res.json();
+    lastHTML = json.html;
+
+    ri.innerHTML = `<div class="success-badge">✓ Salespage fertig!</div><p style="font-size:13px;color:var(--text-mid);line-height:1.6">Kopiere das HTML oder lade die Datei herunter. Dann direkt in Elopage / ThriveCart / Kajabi einbauen.</p>`;
+    ra.style.display = 'flex';
+    rp.style.display = 'block';
+    rp.textContent = lastHTML.substring(0, 3000) +
+      (lastHTML.length > 3000 ? `\n\n... +${Math.round((lastHTML.length - 3000) / 1000)}k Zeichen – lade die Datei für vollständigen Code herunter` : '');
+
+  } catch (err) {
+    ri.innerHTML = `<div class="result-info" style="color:#c0392b;border:1px solid #f5c6c6">Fehler: ${err.message}</div>`;
+  }
+}
+
+// ── PROMPT BUILDER ──
+function buildPrompt(d) {
+  return `Du bist ein Top-Copywriter für digitale Miniprodukte im DACH-Raum. Erstelle eine vollständige, VERKAUFSSTARKE HTML-Salespage.
+
+PRODUKT-DATEN:
+- Name: ${d.name}
+- Typ: ${d.type}
+- Thema / Versprechen: ${d.promise}
+- USP (warum bei mir kaufen): ${d.usp}
+- Zielgruppe: ${d.target}
+- Für wen: ${d.who}
+- Preis: ${d.price}€ netto${d.oldprice ? ' (regulär: ' + d.oldprice + ')' : ''}
+- Tonalität: ${d.tone}
+- Sprache: ${d.lang}
+- Plattform: ${d.platform}
+
+VORHER / NACHHER:
+- Vorher (Problem): ${d.before}
+- Nachher (Ergebnis): ${d.afterShort}
+
+PROBLEME DER ZIELGRUPPE:
+1. ${d.p1}
+2. ${d.p2}
+3. ${d.p3}
+
+TRANSFORMATION:
+- Hauptergebnis: ${d.outcome}
+- Konkrete Vorteile: ${d.benefits}
+
+PRODUKTINHALT:
+${d.content}
+
+CREATOR:
+${d.creator || '(nicht angegeben)'}
+
+TESTIMONIALS:
+${d.t1 ? '- ' + d.t1 : '(keine)'}
+${d.t2 ? '- ' + d.t2 : ''}
+
+GARANTIE: ${d.guarantee || 'keine'}
+
+BRANDING:
+- Button-Farbe: ${d.col1}
+- Akzent-Hintergrund: ${d.col2}
+
+PFLICHTSTRUKTUR (genau in dieser Reihenfolge):
+1. Hero-Section: starker Hook + Versprechen + erster CTA-Button
+2. Trust-Banner: 1-2 konkrete Zahlen / Ergebnisse als Social Proof
+3. Pain-Section "Kennst du das?": die 3 Probleme als FLIESSTEXT – emotional, nicht als Bullet-Liste
+4. Mindshift: alte Denkweise → neue Wahrheit (z.B. "Du brauchst keine 10k Follower")
+5. Wunschzustand "Stell dir vor...": emotionale Zukunftsvision, konkret und lebendig
+6. Produkt-Reveal: Name + alle Inhalte mit ✓-Häkchen, Wert je Modul falls angegeben
+7. Über die Creatorin (kurz, nur wenn angegeben)
+8. Testimonials (nur wenn angegeben)
+9. Preis-Sektion: Wert vs. Preis, Streichpreis, Garantie, CTA-Button
+10. FAQ: 3-4 typische Einwände mit klaren, kurzen Antworten
+11. Finaler CTA mit Dringlichkeit
+
+SCHREIBREGELN:
+- Du-Form, kurze Sätze, emotional & absolut klar
+- Kein 12-Jähriger darf verwirrt sein
+- Verboten: hustlen, Buzzwords, Chatbot, leere Phrasen
+- CTA-Buttons aktiv: "Jetzt freischalten", "Ich bin dabei!", "Zugang sichern"
+- Google Fonts: Montserrat (Text) + Cormorant Garamond italic (Headlines)
+- Vollständig responsive, Mobile First
+- Branding-Farben konsequent einsetzen
+
+NUR HTML zurückgeben – kein Markdown, keine Erklärungen davor oder danach.
+Starte direkt mit <!DOCTYPE html>`;
+}
+
+// ── COPY & DOWNLOAD ──
+function copyHTML() {
+  if (!lastHTML) return;
+  navigator.clipboard.writeText(lastHTML)
+    .then(() => alert('✓ HTML kopiert!'))
+    .catch(() => alert('Kopieren fehlgeschlagen – bitte manuell aus der Vorschau kopieren.'));
+}
+
+function downloadHTML() {
+  if (!lastHTML) return;
+  const blob = new Blob([lastHTML], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const name = (document.getElementById('prod_name')?.value || 'salespage')
+    .toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  a.download = `salespage-${name}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
